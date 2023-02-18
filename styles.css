@@ -1,0 +1,7 @@
+.green {
+  background-color: green;
+}
+button.sent {
+  background-color: #4CAF50; /* green */
+  color: white;
+}

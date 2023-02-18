@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link rel="stylesheet" type="text/css" href="styles.css">
+	<title>Mood Survey</title>
+	<script>
+		var audio;
+		var initialMood;
+		var finalMood;
+
+		function playMusic() {
+			audio = new Audio("Hey Ya.mp3");
+			audio.play();
+		}
+
+		function stopMusic() {
+			if (audio) {
+				audio.pause();
+				audio.currentTime = 0;
+			}
+		}
+
+		function toggleSelected(button) {
+			if (button.classList.contains('selected')) {
+				button.classList.remove('selected');
+				if (button.dataset.type === "initial") {
+					initialMood = null;
+				} else {
+					finalMood = null;
+				}
+			} else {
+				var selectedButtons = document.querySelectorAll('button.selected[data-type="' + button.dataset.type + '"]');
+				for (var i = 0; i < selectedButtons.length; i++) {
+					selectedButtons[i].classList.remove('selected');
+				}
+				button.classList.add('selected');
+				if (button.dataset.type === "initial") {
+					initialMood = button.textContent;
+				} else {
+					finalMood = button.textContent;
+				}
+			}
+		}
+	</script>
+	<style>
+		button.selected {
+			background-color: green;
+		}
+	</style>
+</head>
+<body>
+	<h1>Mood Survey</h1>
+	<form action="store_results.php" method="post">
+		<h2>Initial Mood Survey</h2>
+		<button type="button" class="btn initial-btn" id="initial-happy-btn">Happy</button>
+		<button type="button" class="btn initial-btn" id="initial-sad-btn">Sad</button>
+		<button type="button" class="btn initial-btn" id="initial-neutral-btn">Neutral</button>
+		<br><br>
+		<h2>Music Clip</h2>
+		<button type="button" class="btn play" id="play-btn">Play</button>
+		<button type="button" class="btn stop" id="stop-btn" disabled>Stop</button>
+		<audio id="music-clip" src="pop.mp3"></audio>
+		<br><br>
+		<h2>Final Mood Survey</h2>
+		<button type="button" class="btn final-btn" id="final-happy-btn">Happy</button>
+		<button type="button" class="btn final-btn" id="final-sad-btn">Sad</button>
+		<button type="button" class="btn final-btn" id="final-neutral-btn">Neutral</button>
+		<br><br>
+		<label for="name">Name:</label>
+		<input type="text" id="name" name="name"><br><br>
+		<button type="submit" class="btn" id="send-btn" disabled>Send</button>
+	</form>
+	<script>
+		var initialBtns = document.querySelectorAll(".initial-btn");
+		var finalBtns = document.querySelectorAll(".final-btn");
+		var playBtn = document.getElementById("play-btn");
+		var stopBtn = document.getElementById("stop-btn");
+		var musicClip = document.getElementById("music-clip");
+		var sendBtn = document.getElementById("send-btn");
+		var nameInput = document.getElementById("name");
+		var initialSelection = "";
+		var finalSelection = "";
+
+		// Function to handle initial mood button clicks
+		function handleInitialButtonClick() {
+			// Set initial button style
+			this.classList.add("green");
+			// Remove green style from other initial buttons
+			for (var i = 0; i < initialBtns.length; i++) {
+				if (initialBtns[i].id !== this.id && initialBtns[i].classList.contains("green")) {
+					initialBtns[i].classList.remove("green");
+				}
+			}
+			// Store the initial selection
+			initialSelection = this.innerHTML;
+			// Check if all required fields are filled
+			checkFields();
+		}
+
+		// Function to handle final mood button clicks
+		function handleFinalButtonClick() {
+			// Set final button style
+			this.classList.add("green");
+			// Remove green style from other final buttons
+			for (var i = 0; i < finalBtns.length; i++) {
+				if (finalBtns[i].id !== this.id && finalBtns[i].classList.contains("green")) {
+					finalBtns[i].classList.remove("green");
+				}
+			}
+			// Store the final selection
+			finalSelection = this.innerHTML;
+			// Check if all required fields are filled
+			checkFields();
+		}
+
+		// Function to handle play button click
+		function handlePlayButtonClick() {
+			musicClip.play();
+			playBtn.disabled = true;
+			stopBtn.disabled = false;
+		}
+
+		// Function to handle stop button click
+		function handleStopButtonClick() {
+			musicClip.pause();
+			musicClip.currentTime = 0;
+			playBtn.disabled = false;
+			stopBtn.disabled = true;
+		}
+
+		// Function to check if all required fields are filled
+		function checkFields() {
+			if (initialSelection && finalSelection && nameInput.value) {
+				sendBtn.disabled = false;
+			} else {
+				sendBtn.disabled = true;
+			}
+		}
+
+
+	// Function to handle send button click
+	function handleSendButtonClick() {
+		// Disable send button to prevent multiple submissions
+		this.disabled = true;
+		// Set send button style
+		this.classList.add("sent");
+		// Change text of send button to "Sent"
+		this.innerHTML = "Sent";
+		// Reset form
+		form.reset();
+		// Enable all buttons
+		for (var i = 0; i < btns.length; i++) {
+			btns[i].disabled = false;
+			btns[i].classList.remove("green");
+			btns[i].classList.remove("sent");
+		}
+		// Reset selections
+		initialSelection = "";
+		finalSelection = "";
+		// Reset send button
+		sendBtn.disabled = true;
+	}
+
+
+
+		// Add event listeners to buttons
+		for (var i = 0; i < initialBtns.length; i++) {
+			initialBtns[i].addEventListener("click", handleInitialButtonClick);
+		}
+
+		for (var i = 0; i < finalBtns.length; i++) {
+			finalBtns[i].addEventListener("click", handleFinalButtonClick);
+		}
+
+		playBtn.addEventListener("click", handlePlayButtonClick);
+
+		stopBtn.addEventListener("click", handleStopButtonClick);
+
+		nameInput.addEventListener("input", checkFields);
+
+		sendBtn.addEventListener("click", function() {
+  			sendBtn.classList.add("sent");
+		});
+
+
+	</script>
+</body>
+</html>
+
+		
